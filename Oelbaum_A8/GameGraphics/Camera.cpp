@@ -92,24 +92,7 @@ void Camera::Update(float dt, HWND windowHandle)
 
 	}
 	
-	POINT mousePos = {};
-	GetCursorPos(&mousePos);
-	ScreenToClient(windowHandle, &mousePos);
-	float x = prevMouse.x - mousePos.x;
-	float y = prevMouse.y - mousePos.y;
 
-	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-		
-		
-
-		transform.Rotate(y * -lookSpeed * dt, x * -lookSpeed * dt, 0);
-	
-	}
-	
-	
-	prevMouse = mousePos;
-	
-	UpdateViewMatrix();
 	
 }
 

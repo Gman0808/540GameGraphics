@@ -149,23 +149,31 @@ void Game::Init()
 
 	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
-	player = Entity(playMesh, tObj1);
-	player.GetTransform()->SetPosition(0, 0, 0.0f);
-	player.mat = &mat2;
+	pEntity = new Entity(playMesh, tObj1);
+	pEntity->GetTransform()->SetPosition(0, 0, 0.0f);
+	pEntity->mat = &mat2;
 
-	gObjList[0] = Entity(mesh1, tObj1);
-	gObjList[0].GetTransform()->SetPosition(0, -0.5f + 0.01f, 0.0f);
-	gObjList[0].mat = &mat2;
-
-	gObjList[1] = Entity(mesh1, tObj1);
-	gObjList[1].GetTransform()->SetPosition(0, -0.7f, 0.0f);
-	gObjList[1].mat = &mat1;
+	int index = 0;
+	for  (int y = 0; y < 6; y++)
+	{
+		for (int x = 0; x < 6; x++)
+		{
+			for (int z = 0; z < 6; z++) {
+				gObjList[index] = Entity(mesh1, tObj1);
+				gObjList[index].GetTransform()->SetPosition(x * 10.5f, y * 5.5f + (y * 0.5f), z * 10.5f);
+				gObjList[index].mat = &mat2;
+				index++;
+			}
+		}
+	}
+	
+	
 
 
 	//cam = new Camera(XMFLOAT3(0,0,0), ((float)this->width/this->height), keyMove, mouseMove, farClip,nearClip, feild view);
 	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 100.0f, 0.01f, 0.78f);
 	
-
+	player = Player(pEntity, cam);
 
 }
 
@@ -279,45 +287,33 @@ void Game::Update(float deltaTime, float totalTime)
 		Quit();
 
 
+
+	//testing out envrionment
+	for (int i = 0; i < 216; i++)
+	{
+		
+	
+
+		if (i % 2 == 0) {
+			gObjList[i].object.Rotate(0, 5.0f * deltaTime, 0);
+			gObjList[i].object.MoveRelative(  -0.0005f, i * -0.0005f,  -0.0005f);
+		}
+		else
+			gObjList[i].object.Rotate(0, 2.0f * deltaTime, 0);
+		
+
+	}
+	
+
+
+
+
+	
+
+
 	cam->Update(deltaTime, this->hWnd);
 
-	for (size_t i = 0; i < 5; i++)
-	{
-		//gObjList[i].MoveRelative(0.05f * i * deltaTime,0, 0.05f * i * deltaTime);
-	//	gObjList[i].Rotate(0.0f,0.0f, i * deltaTime);
-
-	}
-	gObjList[0].object.Rotate(0, 2.0f * deltaTime, 0);
-	gObjList[0].object.SetPosition(-1, 0, 1);
-	//gObjList[0].object.SetPosition(sin(totalTime) * -1.0f, 0, cos(totalTime) * -1.0f);
-
-	gObjList[1].object.Rotate(0, 2.0f * deltaTime, 0);
-	gObjList[1].object.SetPosition(1, 0, 1);
-
-
-	if (GetAsyncKeyState('W') & 0x8000) {
-		player.object.MoveRelative(0, 0, deltaTime * cam->getSpeed());
-
-	}
-	if (GetAsyncKeyState('S') & 0x8000) {
-		player.object.MoveRelative(0, 0, deltaTime * -cam->getSpeed());
-
-	}
-
-
-	if (GetAsyncKeyState('A') & 0x8000) {
-		player.object.MoveRelative(deltaTime * -cam->getSpeed(), 0, 0);
-
-	}
-	if (GetAsyncKeyState('D') & 0x8000) {
-		player.object.MoveRelative(deltaTime * cam->getSpeed(), 0, 0);
-
-	}
-
-	cam->transform.SetPosition(player.object.position.x, player.object.position.y, player.object.position.z);
-	cam->transform.MoveRelative(0, 0.9f, -4.3f);
-
-
+	player.Update(deltaTime, this->hWnd, this->width, this->height);
 
 }
 
@@ -364,9 +360,13 @@ void Game::Draw(float deltaTime, float totalTime)
 	pixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition()); 
 	pixelShader->CopyAllBufferData();
 
-	gObjList[0].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
-	gObjList[1].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
-	player.Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
+	for (int i = 0; i < 216; i++)
+	{
+		gObjList[i].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
+	}
+	
+	
+	pEntity->Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
 
 
 		// Present the back buffer to the user

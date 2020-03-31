@@ -10,6 +10,7 @@
 #include "Material.h"
 #include "SimpleShader.h"
 #include "Lights.h"
+#include "Player.h"
 
 class Game 
 	: public DXCore
@@ -67,13 +68,14 @@ private:
 
 
 	Mesh playMesh;
-	Entity player;
+	Entity* pEntity;
 
+	Player player;
 
 	Entity gObj1;
 	Transform tObj1;
 	Transform tObj2;
-	Entity gObjList [6];
+	Entity gObjList [216];
 
 
 	// Texture related resources

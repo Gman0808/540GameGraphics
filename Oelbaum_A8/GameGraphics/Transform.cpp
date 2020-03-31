@@ -95,6 +95,30 @@ using namespace std;
 		rotation = XMFLOAT3(pitch, yaw, roll);
 	}
 
+	void Transform::RotateCap(float pit,float pit2, float ya, float ya2)
+	{
+		if (pitch > pit)
+			pitch = pit;
+		else if (pitch < pit2)
+			pitch = pit2;
+
+		if (yaw > ya)
+			yaw = ya;
+		else if (yaw < ya2)
+			yaw = ya2;
+
+		rotation = XMFLOAT3(pitch, yaw, roll);
+	}
+
+	void Transform::RotateCap(float pit, float pit2)
+	{
+
+		if (pitch > pit)
+			pitch = pit;
+		else if (pitch < pit2)
+			pitch = pit2;
+	}
+
 	void Transform::Scale(float x, float y, float z)
 	{
 		scale = XMFLOAT3(scale.x * x, scale.y * y, scale.z * z);

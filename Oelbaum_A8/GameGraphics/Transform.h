@@ -41,6 +41,8 @@ using namespace DirectX;
 		//transformers
 		void MoveAbsolute(float x, float y, float z);
 		void Rotate(float pit, float ya, float ro);
+		void RotateCap(float pit, float pit2, float ya, float ya2);
+		void RotateCap(float pit, float pit2);
 		void Scale(float x, float y, float z);
 		void Divide(float x, float y, float z);
 		void MoveRelative(float x, float y, float z);
