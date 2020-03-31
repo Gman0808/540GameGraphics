@@ -66,8 +66,8 @@ private:
 	SimpleVertexShader* vertexShader;
 
 
-	
-	//Microsoft::WRL::ComPtr<ID3D11InputLayout> inputLayout;
+	Mesh playMesh;
+	Entity player;
 
 
 	Entity gObj1;

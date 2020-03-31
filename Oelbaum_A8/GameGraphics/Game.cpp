@@ -143,11 +143,15 @@ void Game::Init()
 
 	mat2 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2, samplerOptions2);
 
-	tObj1 = Transform(XMFLOAT3(0, 0, 0.5f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
 	Mesh* mesh1 = new    Mesh(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device);
 
+	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
+	player = Entity(playMesh, tObj1);
+	player.GetTransform()->SetPosition(0, 0, 0.0f);
+	player.mat = &mat2;
 
 	gObjList[0] = Entity(mesh1, tObj1);
 	gObjList[0].GetTransform()->SetPosition(0, -0.5f + 0.01f, 0.0f);
@@ -158,9 +162,9 @@ void Game::Init()
 	gObjList[1].mat = &mat1;
 
 
-	//cam = new Camera(XMFLOAT3(0,0,0), ((float)this->width/this->height), keyMove, mouseMove, farClip,nearClip, angle);
-	cam = new Camera(XMFLOAT3(0, 0, -1), ((float)this->width / this->height), 2, 1, 100.0f, 0.01f, 0.78f);
-
+	//cam = new Camera(XMFLOAT3(0,0,0), ((float)this->width/this->height), keyMove, mouseMove, farClip,nearClip, feild view);
+	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 100.0f, 0.01f, 0.78f);
+	
 
 
 }
@@ -281,7 +285,7 @@ void Game::Update(float deltaTime, float totalTime)
 	{
 		//gObjList[i].MoveRelative(0.05f * i * deltaTime,0, 0.05f * i * deltaTime);
 	//	gObjList[i].Rotate(0.0f,0.0f, i * deltaTime);
-		
+
 	}
 	gObjList[0].object.Rotate(0, 2.0f * deltaTime, 0);
 	gObjList[0].object.SetPosition(-1, 0, 1);
@@ -289,19 +293,30 @@ void Game::Update(float deltaTime, float totalTime)
 
 	gObjList[1].object.Rotate(0, 2.0f * deltaTime, 0);
 	gObjList[1].object.SetPosition(1, 0, 1);
-	//gObjList[1].object.SetPosition(sin(totalTime) * 1.0f, 0, cos(totalTime) * 1.0f);
 
-	if (GetAsyncKeyState('D') & 0x8000) {
-		//gObjList[5].Rotate(0.0f, 2 * deltaTime, 0.0f);
-		
-		
+
+	if (GetAsyncKeyState('W') & 0x8000) {
+		player.object.MoveRelative(0, 0, deltaTime * cam->getSpeed());
+
 	}
+	if (GetAsyncKeyState('S') & 0x8000) {
+		player.object.MoveRelative(0, 0, deltaTime * -cam->getSpeed());
+
+	}
+
+
 	if (GetAsyncKeyState('A') & 0x8000) {
-		//gObjList[5].Rotate(0.0f, -2 * deltaTime, 0.0f);
-
+		player.object.MoveRelative(deltaTime * -cam->getSpeed(), 0, 0);
 
 	}
-	
+	if (GetAsyncKeyState('D') & 0x8000) {
+		player.object.MoveRelative(deltaTime * cam->getSpeed(), 0, 0);
+
+	}
+
+	cam->transform.SetPosition(player.object.position.x, player.object.position.y, player.object.position.z);
+	cam->transform.MoveRelative(0, 0.9f, -4.3f);
+
 
 
 }
@@ -349,8 +364,9 @@ void Game::Draw(float deltaTime, float totalTime)
 	pixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition()); 
 	pixelShader->CopyAllBufferData();
 
-	gObjList[0].Draw(context, vertexShader, pixelShader, cam);
-	gObjList[1].Draw(context, vertexShader, pixelShader, cam);
+	gObjList[0].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
+	gObjList[1].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
+	player.Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
 
 
 		// Present the back buffer to the user

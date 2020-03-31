@@ -14,7 +14,7 @@ Camera::Camera(XMFLOAT3 inPos, float asRatio, float mSpeed, float lSpeed, float 
 	fView = fV;
 	nearClip = nClip;
 	farClip = fClip;
-	transform = Transform(XMFLOAT3(0, 0, 0), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+	transform = Transform(position, XMFLOAT3(0.3f, 0.0f, 0), XMFLOAT3(1.0f, 1.0f, 1.0f));
 	XMStoreFloat4x4(&proMat, XMMatrixIdentity());
 	XMStoreFloat4x4(&viewMat, XMMatrixIdentity());
 
@@ -72,24 +72,7 @@ void Camera::UpdateViewMatrix()
 
 void Camera::Update(float dt, HWND windowHandle)
 {
-	if (GetAsyncKeyState('W') & 0x8000) {
-		transform.MoveRelative(0, 0, dt * movSpeed);
-		cout << "W" << endl;
-	}
-	if (GetAsyncKeyState('S') & 0x8000) {
-		transform.MoveRelative(0, 0, dt * -movSpeed);
-		cout << "S" << endl;
-	}
-
-
-	if (GetAsyncKeyState('A') & 0x8000) {
-		transform.MoveRelative(dt * -movSpeed, 0,0);
-		cout << "A" << endl;
-	}
-	if (GetAsyncKeyState('D') & 0x8000) {
-		transform.MoveRelative(dt * movSpeed, 0, 0);
-		cout << "D" << endl;
-	}
+	
 
 	if (GetAsyncKeyState('O') & 0x8000) {
 		transform.MoveRelative(0,dt * movSpeed, 0);
@@ -108,6 +91,7 @@ void Camera::Update(float dt, HWND windowHandle)
 	if (GetAsyncKeyState(VK_CONTROL) & 0x8000) {
 
 	}
+	
 	POINT mousePos = {};
 	GetCursorPos(&mousePos);
 	ScreenToClient(windowHandle, &mousePos);
@@ -124,6 +108,12 @@ void Camera::Update(float dt, HWND windowHandle)
 	
 	
 	prevMouse = mousePos;
+	
 	UpdateViewMatrix();
 	
+}
+
+float Camera::getSpeed()
+{
+	return movSpeed;
 }

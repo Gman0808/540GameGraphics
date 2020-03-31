@@ -1,6 +1,7 @@
 #pragma once
 #include<Windows.h>
 #include "Transform.h";
+#include "Entity.h"
 class Camera
 {
 	
@@ -10,6 +11,7 @@ class Camera
 	XMVECTOR pos;
 	XMVECTOR up;
 	XMVECTOR dir;
+	
 
 	POINT prevMouse;
 	float fView;
@@ -28,7 +30,7 @@ public:
 	 void UpdateProjectionMatrix(float aspectRatio);
 	 void UpdateViewMatrix();
 	 void Update(float dt, HWND windowHandle);
-
+	 float getSpeed();
 
 
 };

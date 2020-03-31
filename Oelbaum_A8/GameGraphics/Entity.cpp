@@ -54,12 +54,12 @@ void Entity::Scale(float x, float y, float z)
 }
 
 
-void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, Camera* camera)
+void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, XMFLOAT4X4 view, XMFLOAT4X4 proj)
 {
 	mat->getVertex()->SetFloat4("colorTint", getTint()); //getTint
 	mat->getVertex()->SetMatrix4x4("world", object.GetWorldMatrix());
-	mat->getVertex()->SetMatrix4x4("view", camera->getView());
-	mat->getVertex()->SetMatrix4x4("projection", camera->getProj());
+	mat->getVertex()->SetMatrix4x4("view", view);
+	mat->getVertex()->SetMatrix4x4("projection", proj);
 
 	
 	// Actually copy the data to the GPU

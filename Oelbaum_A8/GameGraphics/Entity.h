@@ -30,7 +30,9 @@ public:
 	void MoveRelative(float x, float y, float z);
 	void Rotate(float pit, float ya, float ro);
 	void Scale(float x, float y, float z);
-	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, Camera* camera);
+	//void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, Camera* camera); - //freaked out for no reason
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, XMFLOAT4X4 view, XMFLOAT4X4 proj);
+
 	XMFLOAT4 getTint();
 };
 
