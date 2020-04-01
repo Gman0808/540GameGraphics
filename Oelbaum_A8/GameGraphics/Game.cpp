@@ -145,7 +145,9 @@ void Game::Init()
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-	Mesh* mesh1 = new    Mesh(GetFullPathTo("../../Assets/Models/sphere.obj").c_str(), device);
+	Mesh* mesh1 = new    Mesh(GetFullPathTo("../../Assets/Models/StarShard.obj").c_str(), device);
+	Mesh* mesh2 = new    Mesh(GetFullPathTo("../../Assets/Models/Shard.obj").c_str(), device);
+	Mesh* mesh3 = new    Mesh(GetFullPathTo("../../Assets/Models/SplitShard.obj").c_str(), device);
 
 	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
@@ -159,8 +161,15 @@ void Game::Init()
 		for (int x = 0; x < 6; x++)
 		{
 			for (int z = 0; z < 6; z++) {
-				gObjList[index] = Entity(mesh1, tObj1);
-				gObjList[index].GetTransform()->SetPosition(x * 10.5f, y * 5.5f + (y * 0.5f), z * 10.5f);
+				if (index % 3 == 0)
+					gObjList[index] = Entity(mesh1, tObj1);
+				else if (index % 3 == 1)
+					gObjList[index] = Entity(mesh2, tObj1);
+				else if (index % 3 == 2)
+					gObjList[index] = Entity(mesh3, tObj1);
+
+				//gObjList[index] = Entity(mesh1, tObj1);
+				gObjList[index].GetTransform()->SetPosition(x * 10.5f, y * 10, z * 10.5f);
 				gObjList[index].mat = &mat2;
 				index++;
 			}
@@ -295,11 +304,11 @@ void Game::Update(float deltaTime, float totalTime)
 	
 
 		if (i % 2 == 0) {
-			gObjList[i].object.Rotate(0, 5.0f * deltaTime, 0);
+			//gObjList[i].object.Rotate(0, 5.0f * deltaTime, 0);
 			gObjList[i].object.MoveRelative(  -0.0005f, i * -0.0005f,  -0.0005f);
 		}
-		else
-			gObjList[i].object.Rotate(0, 2.0f * deltaTime, 0);
+		//else
+			//gObjList[i].object.Rotate(0, 2.0f * deltaTime, 0);
 		
 
 	}
