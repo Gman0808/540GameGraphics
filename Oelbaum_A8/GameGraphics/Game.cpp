@@ -7,6 +7,7 @@ using namespace std;
 #pragma comment(lib, "d3dcompiler.lib")
 #include <d3dcompiler.h>
 #include "WICTextureLoader.h"
+#include "DDSTextureLoader.h"
 
 // For the DirectX Math library
 using namespace DirectX;
@@ -165,6 +166,9 @@ void Game::Init()
 
 	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
+
+
+
 	pEntity = new Entity(playMesh, tObj1);
 	pEntity->GetTransform()->SetPosition(0, 0, 0.0f);
 	pEntity->mat = &mat2;
@@ -194,11 +198,67 @@ void Game::Init()
 
 
 	//cam = new Camera(XMFLOAT3(0,0,0), ((float)this->width/this->height), keyMove, mouseMove, farClip,nearClip, feild view);
-	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 100.0f, 0.01f, 0.78f);
+	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 150.0f, 0.001f, 0.78f);
 	
 	player = Player(pEntity, cam);
 
+
+
+
+
+	skyMesh = new  Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
+	// Load the sky box texture
+	CreateDDSTextureFromFile(
+		device.Get(),
+		GetFullPathTo_Wide(L"../../Assets/Skies/SpaceCubeMap.dds").c_str(),
+		0,
+		skySRV.GetAddressOf());
+
+	// Make the sky rasterizer state
+	D3D11_RASTERIZER_DESC rastDesc = {};
+	rastDesc.FillMode = D3D11_FILL_SOLID;
+	rastDesc.CullMode = D3D11_CULL_FRONT;
+	rastDesc.DepthClipEnable = true;
+	device->CreateRasterizerState(&rastDesc, skyRasterState.GetAddressOf());
+
+	// Make the sky depth state
+	D3D11_DEPTH_STENCIL_DESC dsDesc = {};
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+	device->CreateDepthStencilState(&dsDesc, skyDepthState.GetAddressOf());
+
 }
+
+void Game::RenderSky()
+{
+	// Set up my render states
+	context->RSSetState(skyRasterState.Get());
+	context->OMSetDepthStencilState(skyDepthState.Get(), 0);
+
+	// Set up the sky shaders
+	skyVS->SetShader();
+	skyPS->SetShader();
+	
+	skyVS->SetMatrix4x4("view", cam->getView());
+	skyVS->SetMatrix4x4("proj", cam->getProj());
+	skyVS->CopyAllBufferData();
+
+	skyPS->SetShaderResourceView("sky", skySRV.Get());
+	skyPS->SetSamplerState("samplerOptions", samplerOptions.Get());
+
+	// Actually draw the geometry
+	skyMesh->SetBuffersAndDraw(context);
+
+	// Reset any states back to the default
+	context->RSSetState(0); // Sets the default state
+	context->OMSetDepthStencilState(0, 0);
+}
+
+
+
+
+
 
 // --------------------------------------------------------
 // Loads shaders from compiled shader object (.cso) files
@@ -220,6 +280,16 @@ void Game::LoadShaders()
 		device.Get(),
 		context.Get(),
 		GetFullPathTo_Wide(L"PixelShader.cso").c_str());
+
+	skyVS = new SimpleVertexShader(
+		device.Get(),
+		context.Get(),
+		GetFullPathTo_Wide(L"SkyVS.cso").c_str());
+
+	skyPS = new SimplePixelShader(
+		device.Get(),
+		context.Get(),
+		GetFullPathTo_Wide(L"SkyPS.cso").c_str());
 }
 
 
@@ -315,14 +385,37 @@ void Game::Update(float deltaTime, float totalTime)
 	for (int i = 0; i < 216; i++)
 	{
 		
-	
-
-		if (i % 2 == 0) {
-			//gObjList[i].object.Rotate(0, 5.0f * deltaTime, 0);
-			gObjList[i].object.MoveRelative(  -0.0005f, i * -0.0005f,  -0.0005f);
+		gObjList[i].object.Rotate(0, 0.5f * deltaTime, 0);
+		if (i % 7 == 0) {
+			
+			gObjList[i].object.MoveRelative(i * -0.005f, i * -0.00005f, 0);
 		}
-		//else
-			//gObjList[i].object.Rotate(0, 2.0f * deltaTime, 0);
+		else if (i % 6 == 0) {
+			gObjList[i].object.MoveRelative(i * -0.0005f, 0, i * -0.0005f);
+			gObjList[i].object.Rotate(0.5f * deltaTime, 0.5f * deltaTime, 0);
+		}
+
+		else if (i % 5 == 0) {
+			gObjList[i].object.MoveRelative(-0.0005f, 0, i * 0.0005f);
+			gObjList[i].object.Rotate(0, 0, -0.5f * deltaTime);
+
+		}
+		else if (i % 4 == 0) {
+			
+			gObjList[i].object.MoveRelative(i * -0.0005f, i * -0.00005f,  -0.0005f);
+		}
+		else if (i % 3 == 0) {
+			gObjList[i].object.MoveRelative(i * -0.0005f, 0, -0.0005f);
+			gObjList[i].object.Rotate(0.5f * deltaTime, 0, 0);
+		}
+			
+		else if (i % 2 == 0) {
+			gObjList[i].object.MoveRelative(0.0005f, 0, i * -0.0005f);
+			gObjList[i].object.Rotate(0, 0, 0.5f * deltaTime);
+
+		}		
+		else
+			gObjList[i].object.MoveRelative(i * 0.0005f, 0, 0.0005f);
 		
 
 	}
@@ -392,6 +485,9 @@ void Game::Draw(float deltaTime, float totalTime)
 	
 	pEntity->Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj(), player.getPosition(), true);
 
+
+	// Render the sky AFTER all opaque (solid) geometry has been rendered
+	RenderSky();
 
 		// Present the back buffer to the user
 		//  - Puts the final frame we're drawing into the window so the user can see it

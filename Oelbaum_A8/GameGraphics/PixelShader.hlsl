@@ -123,7 +123,7 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	
 	
 	if (!isPlayer) {
-		float Radius = 10.5f;//_Radius
+		float Radius = 7.5f;//_Radius
 		float d = distance(playerPos, input.worldPos);
 		float3 surfaceInput = surfTexture.Sample(samplerOptions, input.uv).rgb;
 		float dN = 1 - saturate(d / Radius);

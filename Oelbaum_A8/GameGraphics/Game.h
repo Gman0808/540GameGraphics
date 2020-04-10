@@ -91,5 +91,17 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalMap2;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> surfInput2;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerOptions2;
+
+
+	// Sky resources
+	Mesh* skyMesh;
+	SimpleVertexShader* skyVS;
+	SimplePixelShader* skyPS;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> skySRV;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> skyRasterState;
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> skyDepthState;
+
+	// Private render methods
+	void RenderSky();
 };
 

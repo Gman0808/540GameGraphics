@@ -333,3 +333,16 @@ int Mesh::GetIndexCount()
 {
 	return indCounter;
 }
+
+void Mesh::SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context)
+{
+	// Set buffers in the input assembler
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+	context->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
+	context->IASetIndexBuffer(indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	// Draw this mesh
+	context->DrawIndexed(this->indCounter, 0, 0);
+}
+
