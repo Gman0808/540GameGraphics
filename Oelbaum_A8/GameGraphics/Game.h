@@ -82,12 +82,14 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseTexture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> specularMap;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalMap;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> surfInput;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerOptions;
 
 	// Texture related resources
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> diffuseTexture2;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> specularMap2;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> normalMap2;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> surfInput2;
 	Microsoft::WRL::ComPtr<ID3D11SamplerState> samplerOptions2;
 };
 

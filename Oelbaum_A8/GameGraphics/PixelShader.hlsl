@@ -15,18 +15,28 @@ cbuffer ExternalData : register(b0)
 	float3 pointLightColor;
 
 	float3 cameraPosition;
-
+	float3 Center;
 	float specIn;
+	bool isPlayer;
+	float3 playerPos;
+
+	
 
 	directionalLight lData1;
 	directionalLight lData2;
 	directionalLight lData3;
+
+
 }
 
 // Texture-related resources
 Texture2D diffuseTexture	: register(t0);
 Texture2D normalMap			: register(t1);
+Texture2D surfTexture		: register(t2); // _mainTex
 SamplerState samplerOptions : register(s0);
+
+
+
 /*
 float4 main(VertexToPixel input) : SV_TARGET
 {
@@ -61,6 +71,19 @@ float3 light2 = ((Diffuse(input.normal, lData2.direction) * 0.1f * lData2.diffus
 
 float4 main(VertexToPixelNormalMap input) : SV_TARGET
 {
+
+	// Sample the texture to get a color
+	  //_MainTex
+
+	
+	
+	
+	
+
+	
+
+
+
 	// Sample the texture to get a color
 	 float3 surfaceColor = diffuseTexture.Sample(samplerOptions, input.uv).rgb;
 
@@ -97,11 +120,18 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	 float3 light3 = ((Diffuse(input.normal, lData3.direction) * 1.0f * lData3.diffuseColor) + ((SpecularPhong(input.normal, lData3.direction, V, 64.0f) * lData3.diffuseColor)));
 
 
+	
+	
+	if (!isPlayer) {
+		float Radius = 10.5f;//_Radius
+		float d = distance(playerPos, input.worldPos);
+		float3 surfaceInput = surfTexture.Sample(samplerOptions, input.uv).rgb;
+		float dN = 1 - saturate(d / Radius);
+		dN = step(0.25, dN) * step(dN, 1.5);
+		surfaceInput = surfaceInput * (1 - dN) + half3(1, 1, 1) * dN;
 
-	 //return Diffuse(input.normal, lData1.direction);
- //	return input.normal;
-	//return float4((light1)*input.color * surfaceColor, 1);
-	// return float4(surfaceColor, 1);
+		clip(surfaceInput > 0.99 ? -1 : 1);
+	}
 
 	 return float4((light1 + light2 + light3 + finalPLColor) * input.color * surfaceColor, 1);
 }

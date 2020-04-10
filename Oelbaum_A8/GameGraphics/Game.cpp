@@ -100,6 +100,13 @@ void Game::Init()
 		GetFullPathTo_Wide(L"../../Assets/Textures/rock.png").c_str(),
 		nullptr,		// We don't need the texture ref ourselves
 		diffuseTexture.GetAddressOf()); // We do need an SRV
+		// Texture releated init
+	CreateWICTextureFromFile(
+		device.Get(),
+		context.Get(),	// Passing in the context auto-generates mipmaps!!
+		GetFullPathTo_Wide(L"../../Assets/Textures/surface_input.png").c_str(),
+		nullptr,		// We don't need the texture ref ourselves
+		surfInput.GetAddressOf()); // We do need an SRV
 
 
 	D3D11_SAMPLER_DESC sampDesc = {};
@@ -112,7 +119,7 @@ void Game::Init()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	device->CreateSamplerState(&sampDesc, samplerOptions.GetAddressOf());
 
-	mat1 = Material(XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f), vertexShader, pixelShader, 0.5f, diffuseTexture, samplerOptions);
+	mat1 = Material(XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f), vertexShader, pixelShader, 0.5f, diffuseTexture, surfInput, samplerOptions);
 
 
 
@@ -130,6 +137,13 @@ void Game::Init()
 		GetFullPathTo_Wide(L"../../Assets/Textures/rock_normals.png").c_str(),
 		nullptr,		// We don't need the texture ref ourselves
 		normalMap2.GetAddressOf()); // We do need an SRV
+		// Texture releated init
+	CreateWICTextureFromFile(
+		device.Get(),
+		context.Get(),	// Passing in the context auto-generates mipmaps!!
+		GetFullPathTo_Wide(L"../../Assets/Textures/surface_input.png").c_str(),
+		nullptr,		// We don't need the texture ref ourselves
+		surfInput2.GetAddressOf()); // We do need an SRV
 
 	D3D11_SAMPLER_DESC sampDesc2 = {};
 	sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -141,7 +155,7 @@ void Game::Init()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	device->CreateSamplerState(&sampDesc, samplerOptions2.GetAddressOf());
 
-	mat2 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2, samplerOptions2);
+	mat2 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2,surfInput2, samplerOptions2);
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
@@ -362,6 +376,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		&lData3,
 		sizeof(DirectionalLight));
 
+	
 	pixelShader->SetFloat3("pointLightPos", XMFLOAT3(0.0f, 0.2f, 0.5f));
 	pixelShader->SetFloat3("pointLightColor", XMFLOAT3(1.0f, 0.5f, 1.0f));
 	//pixelShader->SetFloat3("lightDirection", XMFLOAT3(0, 0, 1));
@@ -371,11 +386,11 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	for (int i = 0; i < 216; i++)
 	{
-		gObjList[i].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
+		gObjList[i].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj(),  player.getPosition(), false);
 	}
 	
 	
-	pEntity->Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj());
+	pEntity->Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj(), player.getPosition(), true);
 
 
 		// Present the back buffer to the user

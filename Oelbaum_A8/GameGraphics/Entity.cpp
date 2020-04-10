@@ -54,14 +54,17 @@ void Entity::Scale(float x, float y, float z)
 }
 
 
-void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, XMFLOAT4X4 view, XMFLOAT4X4 proj)
+void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, XMFLOAT4X4 view, XMFLOAT4X4 proj, XMFLOAT3 playPos, bool isPlayer )
 {
 	mat->getVertex()->SetFloat4("colorTint", getTint()); //getTint
 	mat->getVertex()->SetMatrix4x4("world", object.GetWorldMatrix());
 	mat->getVertex()->SetMatrix4x4("view", view);
 	mat->getVertex()->SetMatrix4x4("projection", proj);
-
 	
+
+	mat->getPixel()->SetFloat3("playerPos", playPos);
+	mat->getPixel()->SetFloat("isPlayer", isPlayer);
+
 	// Actually copy the data to the GPU
 	mat->getVertex()->CopyAllBufferData();
 
@@ -70,6 +73,7 @@ void Entity::Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVer
 
 	mat->getPixel()->SetShaderResourceView("diffuseTexture", mat->getDiffuseTexture().Get());
 	mat->getPixel()->SetShaderResourceView("normalMap", mat->getNormalMap().Get());
+	mat->getPixel()->SetShaderResourceView("surfTexture", mat->getSurfaceInput().Get());
 	mat->getPixel()->SetSamplerState("samplerOptions", mat->getSamplerOptions().Get());
 
 

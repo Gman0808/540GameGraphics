@@ -66,6 +66,19 @@ float Player::simulateAcceleration(float velocity, float acceleration, float dec
 	return velocity;
 }
 
+XMFLOAT3 Player::getPosition()
+{
+	
+	return pEntity->object.GetPosition();
+}
+
+
+XMFLOAT4X4 Player::getWorldPosition()
+{
+	return pEntity->object.GetWorldMatrix();
+
+}
+
 void Player::Update(float deltaTime, HWND windowHandle, float width, float height)
 {
 	

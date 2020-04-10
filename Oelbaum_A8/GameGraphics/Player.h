@@ -33,8 +33,10 @@ class Player
 
 	float simulateAcceleration(float velocity,float acceleration, float decceleration, float vLimit, float deltaTime, int pos, int neg);
 	float simulateAcceleration(float velocity, float acceleration, float decceleration, float decLimit, float vLimit, float deltaTime, int pos);
-
+	XMFLOAT4X4 getWorldPosition();
+	XMFLOAT3  getPosition();
 	void Update(float deltaTime, HWND windowHandle, float width, float height);
+	
 
 };
 

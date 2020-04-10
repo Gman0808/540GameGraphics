@@ -7,7 +7,6 @@ cbuffer ExternalData : register(b0)
 	matrix world;
 	matrix view;
 	matrix projection;
-
 }
 
 
@@ -57,7 +56,7 @@ VertexToPixelNormalMap main(VertexShaderInput input)
 
 	// Calculate the final world position of the vertex
 	output.worldPos = mul(world, float4(input.position, 1.0f)).xyz;
-
+	
 
 	output.normal = mul((float3x3)world, input.normal);
 	output.normal = normalize(output.normal);

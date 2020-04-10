@@ -9,6 +9,8 @@ struct directionalLight {
 
 };
 
+
+
 // Struct representing a single vertex worth of data
 // - This should match the vertex definition in our C++ code
 // - By "match", I mean the size, order and number of members

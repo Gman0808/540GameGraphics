@@ -29,7 +29,7 @@ Mesh::Mesh(const char* objFile, Microsoft::WRL::ComPtr<ID3D11Device> device)
 	std::ifstream obj(objFile);
 
 	// Check for successful open
-	assert(!obj.is_open());
+	assert(obj.is_open());
 
 	// Variables used while reading the file
 	std::vector<XMFLOAT3> positions;     // Positions from the file
