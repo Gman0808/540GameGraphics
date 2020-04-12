@@ -31,7 +31,7 @@ public:
 	void Rotate(float pit, float ya, float ro);
 	void Scale(float x, float y, float z);
 	//void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, Camera* camera); - //freaked out for no reason
-	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, SimpleVertexShader* vs, SimplePixelShader* ps, XMFLOAT4X4 view, XMFLOAT4X4 proj, XMFLOAT3 playPos, bool isPlayer);
+	void Draw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, XMFLOAT4X4 view, XMFLOAT4X4 proj, XMFLOAT3 playPos, bool isPlayer);
 
 	XMFLOAT4 getTint();
 };

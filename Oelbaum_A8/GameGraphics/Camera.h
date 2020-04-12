@@ -1,6 +1,6 @@
 #pragma once
 #include<Windows.h>
-#include "Transform.h";
+#include "Transform.h"
 #include "Entity.h"
 class Camera
 {

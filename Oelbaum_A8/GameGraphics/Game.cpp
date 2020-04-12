@@ -30,8 +30,8 @@ Game::Game(HINSTANCE hInstance)
 	cam = 0;
 //	currentEntity = 0;
 	//prevTab = false;
-	pixelShader = 0;
-	vertexShader = 0;
+	destructivePixelShader = 0;
+	destructiveVertexShader = 0;
 #if defined(DEBUG) || defined(_DEBUG)
 	// Do we want a console window?  Probably only in debug mode
 	CreateConsoleWindow(500, 120, 32, 120);
@@ -59,6 +59,10 @@ Game::~Game()
 	delete cam;
 	cam = nullptr;
 
+	delete destructiveVertexShader;
+	destructiveVertexShader = nullptr;
+	delete destructivePixelShader;
+	destructivePixelShader = nullptr;
 	delete vertexShader;
 	vertexShader = nullptr;
 	delete pixelShader;
@@ -119,7 +123,7 @@ void Game::Init()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	device->CreateSamplerState(&sampDesc, samplerOptions.GetAddressOf());
 
-	mat1 = Material(XMFLOAT4(0.5f, 1.0f, 1.0f, 1.0f), vertexShader, pixelShader, 0.5f, diffuseTexture, surfInput, samplerOptions);
+	
 
 
 
@@ -155,7 +159,8 @@ void Game::Init()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	device->CreateSamplerState(&sampDesc, samplerOptions2.GetAddressOf());
 
-	mat2 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2,surfInput2, samplerOptions2);
+	mat2 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), destructiveVertexShader, destructivePixelShader, 1.5f, diffuseTexture2, normalMap2, surfInput2, samplerOptions2);
+	mat1 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2,surfInput2, samplerOptions2);
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
@@ -167,7 +172,7 @@ void Game::Init()
 
 	pEntity = new Entity(playMesh, tObj1);
 	pEntity->GetTransform()->SetPosition(0, 0, 0.0f);
-	pEntity->mat = &mat2;
+	pEntity->mat = &mat1;
 
 	int index = 0;
 	for  (int y = 0; y < 6; y++)
@@ -211,15 +216,25 @@ void Game::Init()
 void Game::LoadShaders()
 {
 
+	destructiveVertexShader = new SimpleVertexShader(
+		device.Get(),
+		context.Get(),
+		GetFullPathTo_Wide(L"DestructiveVertexShader.cso").c_str());
+
+	destructivePixelShader = new SimplePixelShader(
+		device.Get(),
+		context.Get(),
+		GetFullPathTo_Wide(L"DestructivePixelShader.cso").c_str());
+	
 	vertexShader = new SimpleVertexShader(
 		device.Get(),
 		context.Get(),
-		GetFullPathTo_Wide(L"VertexShader.cso").c_str());
+		GetFullPathTo_Wide(L"NormalMapVS.cso").c_str());
 
 	pixelShader = new SimplePixelShader(
 		device.Get(),
 		context.Get(),
-		GetFullPathTo_Wide(L"PixelShader.cso").c_str());
+		GetFullPathTo_Wide(L"NormalMapPS.cso").c_str());
 }
 
 
@@ -360,12 +375,42 @@ void Game::Draw(float deltaTime, float totalTime)
 		0);
 
 
+	destructiveVertexShader->SetShader();
+	destructivePixelShader->SetShader();
+
+	destructivePixelShader->SetData("lData1",
+	&lData, 
+	sizeof(DirectionalLight));
+
+
+	destructivePixelShader->SetData("lData2",
+		&lData2,
+		sizeof(DirectionalLight));
+
+	destructivePixelShader->SetData("lData3",
+		&lData3,
+		sizeof(DirectionalLight));
+
+	
+	destructivePixelShader->SetFloat3("pointLightPos", XMFLOAT3(0.0f, 0.2f, 0.5f));
+	destructivePixelShader->SetFloat3("pointLightColor", XMFLOAT3(1.0f, 0.5f, 1.0f));
+	//pixelShader->SetFloat3("lightDirection", XMFLOAT3(0, 0, 1));
+
+	destructivePixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition()); 
+	destructivePixelShader->CopyAllBufferData();
+
+	for (int i = 0; i < 216; i++)
+	{
+		gObjList[i].Draw(context, cam->getView(), cam->getProj(),  player.getPosition(), false);
+	}
+	
+	//Player-specific shader information
 	vertexShader->SetShader();
 	pixelShader->SetShader();
 
-	pixelShader->SetData("lData1",   
-   &lData, 
-   sizeof(DirectionalLight));
+	pixelShader->SetData("lData1",
+		&lData,
+		sizeof(DirectionalLight));
 
 
 	pixelShader->SetData("lData2",
@@ -376,21 +421,15 @@ void Game::Draw(float deltaTime, float totalTime)
 		&lData3,
 		sizeof(DirectionalLight));
 
-	
+
 	pixelShader->SetFloat3("pointLightPos", XMFLOAT3(0.0f, 0.2f, 0.5f));
 	pixelShader->SetFloat3("pointLightColor", XMFLOAT3(1.0f, 0.5f, 1.0f));
 	//pixelShader->SetFloat3("lightDirection", XMFLOAT3(0, 0, 1));
 
-	pixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition()); 
+	pixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition());
 	pixelShader->CopyAllBufferData();
-
-	for (int i = 0; i < 216; i++)
-	{
-		gObjList[i].Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj(),  player.getPosition(), false);
-	}
 	
-	
-	pEntity->Draw(context, vertexShader, pixelShader, cam->getView(), cam->getProj(), player.getPosition(), true);
+	pEntity->Draw(context, cam->getView(), cam->getProj(), player.getPosition(), true);
 
 
 		// Present the back buffer to the user

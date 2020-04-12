@@ -63,6 +63,8 @@ private:
 	//Microsoft::WRL::ComPtr<Camera> cam;
 
 	// Shaders and shader-related constructs
+	SimplePixelShader* destructivePixelShader;
+	SimpleVertexShader* destructiveVertexShader;
 	SimplePixelShader* pixelShader;
 	SimpleVertexShader* vertexShader;
 
