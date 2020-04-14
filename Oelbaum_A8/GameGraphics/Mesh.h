@@ -26,6 +26,8 @@ public:
    void drawShape(Microsoft::WRL::ComPtr<ID3D11DeviceContext> contextPointer);
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetVertexBuffer();
 	Microsoft::WRL::ComPtr<ID3D11Buffer> GetIndexBuffer();
+
 	int GetIndexCount();
+	void SetBuffersAndDraw(Microsoft::WRL::ComPtr<ID3D11DeviceContext> context);
 };
 
