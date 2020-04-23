@@ -8,10 +8,13 @@ using namespace std;
 #include <d3dcompiler.h>
 #include "WICTextureLoader.h"
 #include "DDSTextureLoader.h"
+#include <ctime>
+#include <ratio>
+#include <chrono>
 
 // For the DirectX Math library
 using namespace DirectX;
-
+using namespace std::chrono;
 // --------------------------------------------------------
 // Constructor
 //
@@ -78,6 +81,7 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::Init()
 {
+	currentTime = 0;
 	lData.ambientColor = XMFLOAT3(0.5f, 0.1f, 0.6f);
 	lData.diffuseColor = XMFLOAT3(1.0f, 0.1f, 0.1f);
 	lData.direction = XMFLOAT3(1, 0.5f, 0);
@@ -167,7 +171,7 @@ void Game::Init()
 	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(10.0f, 10.0f, 10.0f));
 
 	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
-	
+//	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 	Mesh* playMesh = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
 
@@ -368,14 +372,14 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
+
 	// Quit if the escape key is pressed
 	if (GetAsyncKeyState(VK_ESCAPE))
 		Quit();
-
+	
+	
 	cam->Update(deltaTime, this->hWnd);
-
 	player.Update(deltaTime, this->hWnd, this->width, this->height);
-
 }
 
 // --------------------------------------------------------
@@ -458,7 +462,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		// Present the back buffer to the user
 		//  - Puts the final frame we're drawing into the window so the user can see it
 		//  - Do this exactly ONCE PER FRAME (always at the very end of the frame)
-		swapChain->Present(0, 0);
+		swapChain->Present(1, 0);
 
 		// Due to the usage of a more sophisticated swap chain,
 		// the render target must be re-bound after every call to Present()

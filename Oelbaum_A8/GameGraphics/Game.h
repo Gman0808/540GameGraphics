@@ -11,9 +11,13 @@
 #include "SimpleShader.h"
 #include "Lights.h"
 #include "Player.h"
-
+#include <ctime>
+#include <ratio>
+#include <chrono>
+using namespace std::chrono;
 class Game 
 	: public DXCore
+
 {
 
 public:
@@ -27,7 +31,8 @@ public:
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
 	void Draw(float deltaTime, float totalTime);
-
+	high_resolution_clock::time_point t2;
+	high_resolution_clock::time_point t1;
 private:
 
 	// Initialization helper methods - feel free to customize, combine, etc.
@@ -45,6 +50,11 @@ private:
 		// Buffers to hold actual geometry data
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
+
+
+	bool check = false;
+	float t = 0;
+	float currentTime;
 
 	Mesh obj1;
 	Mesh obj2;
