@@ -181,7 +181,7 @@ void Game::Init()
 
 
 	//cam = new Camera(XMFLOAT3(0,0,0), ((float)this->width/this->height), keyMove, mouseMove, farClip,nearClip, feild view);
-	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 150.0f, 0.001f, 0.78f);
+	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 1000.0f, 0.001f, 0.78f);
 	
 	player = Player(pEntity, cam);
 
