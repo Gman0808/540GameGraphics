@@ -164,9 +164,11 @@ void Game::Init()
 	mat1 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2,surfInput2, samplerOptions2);
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(10.0f, 10.0f, 10.0f));
 
-	Mesh* levelGeometry = new    Mesh(GetFullPathTo("../../Assets/Models/StarShard.obj").c_str(), device);
+	Mesh* levelGeometry = new    Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
 
+	
 	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
 
@@ -185,7 +187,7 @@ void Game::Init()
 	
 	player = Player(pEntity, cam);
 
-	levelEntity = new Entity(levelGeometry, tObj1);
+	levelEntity = new Entity(levelGeometry, tObj2);
 	levelEntity->mat = &mat2;
 
 

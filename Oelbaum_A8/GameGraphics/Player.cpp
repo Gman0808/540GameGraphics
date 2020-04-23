@@ -50,7 +50,7 @@ float Player::simulateAcceleration(float velocity, float acceleration, float dec
 {
 	bool fowardKey = false;
 	if (GetAsyncKeyState(pos) & 0x8000) {
-		velocity += (acceleration * deltaTime);
+		velocity += acceleration;
 		fowardKey = true;
 	}
 	
@@ -59,9 +59,9 @@ float Player::simulateAcceleration(float velocity, float acceleration, float dec
 
 
 	if (!fowardKey && velocity > decLimit)
-		velocity -= (decceleration * deltaTime);
+		velocity -= decceleration;
 	else if (!fowardKey && vFoward < decLimit)
-		velocity += (decceleration * deltaTime);
+		velocity += decceleration;
 
 	return velocity;
 }
@@ -86,7 +86,7 @@ void Player::Update(float deltaTime, HWND windowHandle, float width, float heigh
 	//space - move forwards
 	//adsw - rotate
 
-	vFoward = simulateAcceleration(vFoward,0.1f, 0.05f, 0.05f, 1,  deltaTime, VK_SPACE);
+	vFoward = simulateAcceleration(vFoward * deltaTime,0.1f, 0.05f, 0.05f, 1,  deltaTime, VK_SPACE);
 	vRotateX = simulateAcceleration(vRotateX, 0.3f, 1.0f, 1.0f, deltaTime, 'D', 'A');
 	vRotateY = simulateAcceleration(vRotateY, 0.3f, 1.0f, 1.0f, deltaTime, 'W', 'S');
 	pEntity->object.MoveRelative(0, 0, vFoward);
