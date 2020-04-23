@@ -273,13 +273,6 @@ HRESULT DXCore::InitDirectX()
 	viewport.MaxDepth	= 1.0f;
 	context->RSSetViewports(1, &viewport);
 
-	//Just to kill backface culling
-	D3D11_RASTERIZER_DESC rasterizerDesc = {};
-	rasterizerDesc.CullMode = D3D11_CULL_NONE;
-	ID3D11RasterizerState* rast;
-	device.Get()->CreateRasterizerState(&rasterizerDesc, &rast);
-	context->RSSetState(rast);
-
 	// Return the "everything is ok" HRESULT value
 	return S_OK;
 }

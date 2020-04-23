@@ -200,7 +200,7 @@ void Game::Init()
 	// Make the sky rasterizer state
 	D3D11_RASTERIZER_DESC rastDesc = {};
 	rastDesc.FillMode = D3D11_FILL_SOLID;
-	rastDesc.CullMode = D3D11_CULL_FRONT;
+	rastDesc.CullMode = D3D11_CULL_NONE;
 	rastDesc.DepthClipEnable = true;
 	device->CreateRasterizerState(&rastDesc, skyRasterState.GetAddressOf());
 
@@ -211,12 +211,13 @@ void Game::Init()
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 	device->CreateDepthStencilState(&dsDesc, skyDepthState.GetAddressOf());
 
+	//Since everything is using backfaces, don't worry about resetting culling
+	context->RSSetState(skyRasterState.Get());
 }
 
 void Game::RenderSky()
 {
-	// Set up my render states
-	context->RSSetState(skyRasterState.Get());
+	// Set up my render state
 	context->OMSetDepthStencilState(skyDepthState.Get(), 0);
 
 	// Set up the sky shaders
@@ -234,7 +235,6 @@ void Game::RenderSky()
 	skyMesh->SetBuffersAndDraw(context);
 
 	// Reset any states back to the default
-	context->RSSetState(0); // Sets the default state
 	context->OMSetDepthStencilState(0, 0);
 }
 

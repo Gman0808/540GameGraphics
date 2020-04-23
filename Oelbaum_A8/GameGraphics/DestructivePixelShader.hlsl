@@ -71,19 +71,6 @@ float3 light2 = ((Diffuse(input.normal, lData2.direction) * 0.1f * lData2.diffus
 
 float4 main(VertexToPixelNormalMap input) : SV_TARGET
 {
-
-	// Sample the texture to get a color
-	  //_MainTex
-
-	
-	
-	
-	
-
-	
-
-
-
 	// Sample the texture to get a color
 	float3 surfaceColor = diffuseTexture.Sample(samplerOptions, input.uv).rgb;
 
@@ -120,9 +107,8 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	float3 light3 = ((Diffuse(input.normal, lData3.direction) * 1.0f * lData3.diffuseColor) + ((SpecularPhong(input.normal, lData3.direction, V, 64.0f) * lData3.diffuseColor)));
 
 
-	
-	
-	float Radius = 3.0f;//_Radius
+
+	float Radius = 6.0f;//_Radius
 	float d = distance(playerPos, input.worldPos);
 	float3 surfaceInput = surfTexture.Sample(samplerOptions, input.uv).rgb;
 	float dN = 1 - saturate(d / Radius);
@@ -131,8 +117,13 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 
 	clip(surfaceInput > 0.99 ? -1 : 1);
 
+	//Ortho the normal to be either unit length towards or away from the camera, then manipulate into 1 or zero
+	float toggle = (dot(V, normalize(V - N * dot(V, N))) + 1.0f) / 2.0f;
+	
+	float4 finalColor = float4((light1 + light2 + light3 + finalPLColor) * input.color.xyz * surfaceColor, 1) * toggle + float4(1.0f, 0, 0, 1.0f) * (1 - toggle);
 
-	return float4((light1 + light2 + light3 + finalPLColor) * input.color * surfaceColor, 1);
+
+	return finalColor;
 }
 
 
