@@ -267,11 +267,18 @@ HRESULT DXCore::InitDirectX()
 	D3D11_VIEWPORT viewport = {};
 	viewport.TopLeftX	= 0;
 	viewport.TopLeftY	= 0;
-	viewport.Width		= (float)width;
+	viewport.Width		= (float)width; 
 	viewport.Height		= (float)height;
 	viewport.MinDepth	= 0.0f;
 	viewport.MaxDepth	= 1.0f;
 	context->RSSetViewports(1, &viewport);
+
+	//Just to kill backface culling
+	D3D11_RASTERIZER_DESC rasterizerDesc = {};
+	rasterizerDesc.CullMode = D3D11_CULL_NONE;
+	ID3D11RasterizerState* rast;
+	device.Get()->CreateRasterizerState(&rasterizerDesc, &rast);
+	context->RSSetState(rast);
 
 	// Return the "everything is ok" HRESULT value
 	return S_OK;

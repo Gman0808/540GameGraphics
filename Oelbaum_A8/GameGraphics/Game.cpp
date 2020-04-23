@@ -165,9 +165,7 @@ void Game::Init()
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 
-	Mesh* mesh1 = new    Mesh(GetFullPathTo("../../Assets/Models/StarShard.obj").c_str(), device);
-	Mesh* mesh2 = new    Mesh(GetFullPathTo("../../Assets/Models/Shard.obj").c_str(), device);
-	Mesh* mesh3 = new    Mesh(GetFullPathTo("../../Assets/Models/SplitShard.obj").c_str(), device);
+	Mesh* levelGeometry = new    Mesh(GetFullPathTo("../../Assets/Models/StarShard.obj").c_str(), device);
 
 	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
@@ -178,26 +176,6 @@ void Game::Init()
 	pEntity->GetTransform()->SetPosition(0, 0, 0.0f);
 	pEntity->mat = &mat1;
 
-	int index = 0;
-	for  (int y = 0; y < 6; y++)
-	{
-		for (int x = 0; x < 6; x++)
-		{
-			for (int z = 0; z < 6; z++) {
-				if (index % 3 == 0)
-					gObjList[index] = Entity(mesh1, tObj1);
-				else if (index % 3 == 1)
-					gObjList[index] = Entity(mesh2, tObj1);
-				else if (index % 3 == 2)
-					gObjList[index] = Entity(mesh3, tObj1);
-
-				//gObjList[index] = Entity(mesh1, tObj1);
-				gObjList[index].GetTransform()->SetPosition(x * 10.5f, y * 10, z * 10.5f);
-				gObjList[index].mat = &mat2;
-				index++;
-			}
-		}
-	}
 	
 	
 
@@ -207,7 +185,8 @@ void Game::Init()
 	
 	player = Player(pEntity, cam);
 
-
+	levelEntity = new Entity(levelGeometry, tObj1);
+	levelEntity->mat = &mat2;
 
 
 
@@ -394,54 +373,6 @@ void Game::Update(float deltaTime, float totalTime)
 	if (GetAsyncKeyState(VK_ESCAPE))
 		Quit();
 
-
-
-	//testing out envrionment
-	for (int i = 0; i < 216; i++)
-	{
-		
-		gObjList[i].object.Rotate(0, 0.5f * deltaTime, 0);
-		if (i % 7 == 0) {
-			
-			gObjList[i].object.MoveRelative(i * -0.005f, i * -0.00005f, 0);
-		}
-		else if (i % 6 == 0) {
-			gObjList[i].object.MoveRelative(i * -0.0005f, 0, i * -0.0005f);
-			gObjList[i].object.Rotate(0.5f * deltaTime, 0.5f * deltaTime, 0);
-		}
-
-		else if (i % 5 == 0) {
-			gObjList[i].object.MoveRelative(-0.0005f, 0, i * 0.0005f);
-			gObjList[i].object.Rotate(0, 0, -0.5f * deltaTime);
-
-		}
-		else if (i % 4 == 0) {
-			
-			gObjList[i].object.MoveRelative(i * -0.0005f, i * -0.00005f,  -0.0005f);
-		}
-		else if (i % 3 == 0) {
-			gObjList[i].object.MoveRelative(i * -0.0005f, 0, -0.0005f);
-			gObjList[i].object.Rotate(0.5f * deltaTime, 0, 0);
-		}
-			
-		else if (i % 2 == 0) {
-			gObjList[i].object.MoveRelative(0.0005f, 0, i * -0.0005f);
-			gObjList[i].object.Rotate(0, 0, 0.5f * deltaTime);
-
-		}		
-		else
-			gObjList[i].object.MoveRelative(i * 0.0005f, 0, 0.0005f);
-		
-
-	}
-	
-
-
-
-
-	
-
-
 	cam->Update(deltaTime, this->hWnd);
 
 	player.Update(deltaTime, this->hWnd, this->width, this->height);
@@ -492,11 +423,8 @@ void Game::Draw(float deltaTime, float totalTime)
 	destructivePixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition()); 
 	destructivePixelShader->CopyAllBufferData();
 
-	for (int i = 0; i < 216; i++)
-	{
-		gObjList[i].Draw(context, cam->getView(), cam->getProj(),  player.getPosition(), false);
-	}
-	
+	levelEntity->Draw(context, cam->getView(), cam->getProj(),  player.getPosition(), false);
+
 	//Player-specific shader information
 	vertexShader->SetShader();
 	pixelShader->SetShader();

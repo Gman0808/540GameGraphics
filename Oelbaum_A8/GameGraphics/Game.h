@@ -77,7 +77,7 @@ private:
 	Entity gObj1;
 	Transform tObj1;
 	Transform tObj2;
-	Entity gObjList [216];
+	Entity* levelEntity;
 
 
 	// Texture related resources
