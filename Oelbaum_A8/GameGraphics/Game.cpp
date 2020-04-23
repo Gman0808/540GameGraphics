@@ -166,12 +166,9 @@ void Game::Init()
 	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(10.0f, 10.0f, 10.0f));
 
-	Mesh* levelGeometry = new    Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
-
+	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
 	
-	Mesh* playMesh = new    Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
-
-
+	Mesh* playMesh = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
 
 	pEntity = new Entity(playMesh, tObj1);
