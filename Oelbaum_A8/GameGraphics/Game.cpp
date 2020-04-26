@@ -405,6 +405,19 @@ void Game::Draw(float deltaTime, float totalTime)
 	destructiveVertexShader->SetShader();
 	destructivePixelShader->SetShader();
 
+	destructivePixelShader->SetData("gameTime",
+		&totalTime,
+		sizeof(totalTime)
+	);
+	destructivePixelShader->SetData("screenSizeX",
+		&width,
+		sizeof(width)
+	);
+	destructivePixelShader->SetData("screenSizeY",
+		&height,
+		sizeof(height)
+	);
+
 	destructivePixelShader->SetData("lData1",
 	&lData, 
 	sizeof(DirectionalLight));

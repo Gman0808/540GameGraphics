@@ -20,7 +20,9 @@ cbuffer ExternalData : register(b0)
 	bool isPlayer;
 	float3 playerPos;
 
-	
+	float gameTime;
+	float screenSizeX;
+	float screenSizeY;
 
 	directionalLight lData1;
 	directionalLight lData2;
@@ -91,6 +93,7 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	// Calculate the vector from the pixel's world position to the camera
 	float3 V = normalize(cameraPosition - input.worldPos);
 
+	//Specular
 	float3 pointLightDirection = normalize(input.worldPos - pointLightPos);
 	float pl_diffuse = Diffuse(input.normal, pointLightDirection);
 	float pl_spec = SpecularPhong(input.normal, pointLightDirection, V, 64.0f); // *specMapValue;
@@ -101,13 +104,13 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 		pl_spec * specIn * pointLightColor;
 
 
-
+	//Lights
 	float3 light1 = ((Diffuse(input.normal, lData1.direction) * 1.0f * lData1.diffuseColor) + ((SpecularPhong(input.normal, lData1.direction, V, 64.0f) * lData1.diffuseColor) + lData1.ambientColor));
 	float3 light2 = ((Diffuse(input.normal, lData2.direction) * 0.1f * lData2.diffuseColor) + ((SpecularPhong(input.normal, lData2.direction, V, 64.0f) * lData2.diffuseColor)));
 	float3 light3 = ((Diffuse(input.normal, lData3.direction) * 1.0f * lData3.diffuseColor) + ((SpecularPhong(input.normal, lData3.direction, V, 64.0f) * lData3.diffuseColor)));
 
 
-
+	//clipper
 	float Radius = 6.0f;//_Radius
 	float d = distance(playerPos, input.worldPos);
 	float3 surfaceInput = surfTexture.Sample(samplerOptions, input.uv).rgb;
@@ -117,8 +120,24 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 
 	clip(surfaceInput > 0.99 ? -1 : 1);
 
-	//Ortho the normal to be either unit length towards or away from the camera, then manipulate into 1 or zero
-	float toggle = (dot(V, normalize(V - N * dot(V, N))) + 1.0f) / 2.0f;
+	//Inside pattern
+	//Manhattan distance from center
+	float x = input.position.x + input.position.y;
+	//Pasted with light modifications from https://thebookofshaders.com/13/
+	float amplitude = 1.;
+	float frequency = 1.;
+	float y = sin(x * frequency);
+	float t = 0.01 * (gameTime * 130.0);
+	y += sin(x * frequency * 2.1 + t) * 4.5;
+	y += sin(x * frequency * 1.72 + t * 1.121) * 4.0;
+	y += sin(x * frequency * 2.221 + t * 0.437) * 5.0;
+	y += sin(x * frequency * 3.1122 + t * 4.269) * 2.5;
+	y *= amplitude * 0.06;
+	//end paste
+	
+	//get quantity towards or away from camera, then manipulate into 1 or zero
+	float preToggle = dot(V, N);
+	float toggle = ((preToggle / abs(preToggle)) + 1) / 2;
 	
 	float4 finalColor = float4((light1 + light2 + light3 + finalPLColor) * input.color.xyz * surfaceColor, 1) * toggle + float4(1.0f, 0, 0, 1.0f) * (1 - toggle);
 
