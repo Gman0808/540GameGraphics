@@ -32,8 +32,8 @@ Game::Game(HINSTANCE hInstance)
 		true)			   // Show extra stats (fps) in title bar?
 {
 	cam = 0;
-//	currentEntity = 0;
-	//prevTab = false;
+	//	currentEntity = 0;
+		//prevTab = false;
 	destructivePixelShader = 0;
 	destructiveVertexShader = 0;
 #if defined(DEBUG) || defined(_DEBUG)
@@ -58,8 +58,8 @@ Game::~Game()
 	//cam->~Camera();
 //	cam = nullptr;
 //	delete []cam;
-	
-	
+
+
 	delete cam;
 	cam = nullptr;
 
@@ -72,7 +72,7 @@ Game::~Game()
 	delete pixelShader;
 	pixelShader = nullptr;
 
-	
+
 }
 
 // --------------------------------------------------------
@@ -128,7 +128,7 @@ void Game::Init()
 	sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
 	device->CreateSamplerState(&sampDesc, samplerOptions.GetAddressOf());
 
-	
+
 
 
 
@@ -165,13 +165,13 @@ void Game::Init()
 	device->CreateSamplerState(&sampDesc, samplerOptions2.GetAddressOf());
 
 	mat2 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), destructiveVertexShader, destructivePixelShader, 1.5f, diffuseTexture2, normalMap2, surfInput2, samplerOptions2);
-	mat1 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2,surfInput2, samplerOptions2);
+	mat1 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2, surfInput2, samplerOptions2);
 
-	tObj1 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(10.0f, 10.0f, 10.0f));
+	tObj1 = Transform(XMFLOAT3(0, 0, 30.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
+	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(5.0f, 5.0f, 5.0f));
 
 	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
-//	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
+	//	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 	Mesh* playMesh = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
 
@@ -179,13 +179,13 @@ void Game::Init()
 	pEntity->GetTransform()->SetPosition(0, 0, 0.0f);
 	pEntity->mat = &mat1;
 
-	
-	
+
+
 
 
 	//cam = new Camera(XMFLOAT3(0,0,0), ((float)this->width/this->height), keyMove, mouseMove, farClip,nearClip, feild view);
 	cam = new Camera(XMFLOAT3(0, 1.9f, -3.3f), ((float)this->width / this->height), 2, 1, 1000.0f, 0.001f, 0.78f);
-	
+
 	player = Player(pEntity, cam);
 
 	levelEntity = new Entity(levelGeometry, tObj2);
@@ -227,7 +227,7 @@ void Game::RenderSky()
 	// Set up the sky shaders
 	skyVS->SetShader();
 	skyPS->SetShader();
-	
+
 	skyVS->SetMatrix4x4("view", cam->getView());
 	skyVS->SetMatrix4x4("proj", cam->getProj());
 	skyVS->CopyAllBufferData();
@@ -267,7 +267,7 @@ void Game::LoadShaders()
 		device.Get(),
 		context.Get(),
 		GetFullPathTo_Wide(L"DestructivePixelShader.cso").c_str());
-	
+
 	vertexShader = new SimpleVertexShader(
 		device.Get(),
 		context.Get(),
@@ -332,7 +332,7 @@ void Game::CreateBasicGeometry()
 
 	Vertex vertices3[] =
 	{
-	    { XMFLOAT3(+0.1f, +0.5f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
+		{ XMFLOAT3(+0.1f, +0.5f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
 		{ XMFLOAT3(+0.2f, +0.1f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
 		{ XMFLOAT3(+0.2f, -0.1f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
 		{ XMFLOAT3(+0.1f, -0.5f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
@@ -347,11 +347,11 @@ void Game::CreateBasicGeometry()
 	//    in the correct order and each one will be used exactly once
 	// - But just to see how it's done...
 	unsigned int indices[] = { 0, 1, 2 };
-	unsigned int indices2[] = { 0, 1, 2, 0,2,3};
-	unsigned int indices3[] = { 0,1,2,1,4,5,1,2,4,2,3,4};
+	unsigned int indices2[] = { 0, 1, 2, 0,2,3 };
+	unsigned int indices3[] = { 0,1,2,1,4,5,1,2,4,2,3,4 };
 
 
-	
+
 }
 
 
@@ -363,8 +363,8 @@ void Game::OnResize()
 {
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
-	if(cam != NULL)
-	cam->UpdateProjectionMatrix((float)this->width / this->height);
+	if (cam != NULL)
+		cam->UpdateProjectionMatrix((float)this->width / this->height);
 }
 
 // --------------------------------------------------------
@@ -376,8 +376,8 @@ void Game::Update(float deltaTime, float totalTime)
 	// Quit if the escape key is pressed
 	if (GetAsyncKeyState(VK_ESCAPE))
 		Quit();
-	
-	
+
+
 	cam->Update(deltaTime, this->hWnd);
 	player.Update(deltaTime, this->hWnd, this->width, this->height);
 }
@@ -419,8 +419,8 @@ void Game::Draw(float deltaTime, float totalTime)
 	);
 
 	destructivePixelShader->SetData("lData1",
-	&lData, 
-	sizeof(DirectionalLight));
+		&lData,
+		sizeof(DirectionalLight));
 
 
 	destructivePixelShader->SetData("lData2",
@@ -431,15 +431,15 @@ void Game::Draw(float deltaTime, float totalTime)
 		&lData3,
 		sizeof(DirectionalLight));
 
-	
+
 	destructivePixelShader->SetFloat3("pointLightPos", XMFLOAT3(0.0f, 0.2f, 0.5f));
 	destructivePixelShader->SetFloat3("pointLightColor", XMFLOAT3(1.0f, 0.5f, 1.0f));
 	//pixelShader->SetFloat3("lightDirection", XMFLOAT3(0, 0, 1));
 
-	destructivePixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition()); 
+	destructivePixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition());
 	destructivePixelShader->CopyAllBufferData();
 
-	levelEntity->Draw(context, cam->getView(), cam->getProj(),  player.getPosition(), false);
+	levelEntity->Draw(context, cam->getView(), cam->getProj(), player.getPosition(), false);
 
 	//Player-specific shader information
 	vertexShader->SetShader();
@@ -465,24 +465,24 @@ void Game::Draw(float deltaTime, float totalTime)
 
 	pixelShader->SetFloat3("cameraPosition", cam->transform.GetPosition());
 	pixelShader->CopyAllBufferData();
-	
+
 	pEntity->Draw(context, cam->getView(), cam->getProj(), player.getPosition(), true);
 
 
 	// Render the sky AFTER all opaque (solid) geometry has been rendered
 	RenderSky();
 
-		// Present the back buffer to the user
-		//  - Puts the final frame we're drawing into the window so the user can see it
-		//  - Do this exactly ONCE PER FRAME (always at the very end of the frame)
-		swapChain->Present(1, 0);
+	// Present the back buffer to the user
+	//  - Puts the final frame we're drawing into the window so the user can see it
+	//  - Do this exactly ONCE PER FRAME (always at the very end of the frame)
+	swapChain->Present(1, 0);
 
-		// Due to the usage of a more sophisticated swap chain,
-		// the render target must be re-bound after every call to Present()
-		context->OMSetRenderTargets(1, backBufferRTV.GetAddressOf(), depthStencilView.Get());
+	// Due to the usage of a more sophisticated swap chain,
+	// the render target must be re-bound after every call to Present()
+	context->OMSetRenderTargets(1, backBufferRTV.GetAddressOf(), depthStencilView.Get());
 
 
-	
-	
+
+
 
 }

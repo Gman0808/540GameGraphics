@@ -121,16 +121,20 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	clip(surfaceInput > 0.99 ? -1 : 1);
 
 	//Inside pattern
+	
+	
 	//Manhattan distance from center
-	float x = input.position.x + input.position.y;
+	float x = abs(input.position.x - screenSizeX / 2) + abs(input.position.y - screenSizeY / 2);
+	
 	//Pasted with light modifications from https://thebookofshaders.com/13/
-	float amplitude = 1.;
-	float frequency = 1.;
+	float amplitude = 1;
+	float frequency = 1;
 	float y = sin(x * frequency);
-	float t = 0.01 * (gameTime * 130.0);
+	float t = (gameTime * 2);
+	//Some BS
 	y += sin(x * frequency * 2.1 + t) * 4.5;
 	y += sin(x * frequency * 1.72 + t * 1.121) * 4.0;
-	y += sin(x * frequency * 2.221 + t * 0.437) * 5.0;
+	y += sin(x * frequency * 2.221 + t) * 5.0;
 	y += sin(x * frequency * 3.1122 + t * 4.269) * 2.5;
 	y *= amplitude * 0.06;
 	//end paste
@@ -139,7 +143,7 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	float preToggle = dot(V, N);
 	float toggle = ((preToggle / abs(preToggle)) + 1) / 2;
 	
-	float4 finalColor = float4((light1 + light2 + light3 + finalPLColor) * input.color.xyz * surfaceColor, 1) * toggle + float4(1.0f, 0, 0, 1.0f) * (1 - toggle);
+	float4 finalColor = float4((light1 + light2 + light3 + finalPLColor) * input.color.xyz * surfaceColor, 1) * toggle + float4(y, 0, 0, 1.0f) * (1 - toggle);
 
 
 	return finalColor;
