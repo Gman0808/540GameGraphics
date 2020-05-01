@@ -93,14 +93,14 @@ void Player::Update(float deltaTime, HWND windowHandle, float width, float heigh
 
 	pEntity->object.Rotate(vRotateY * rotSpeed * deltaTime,vRotateX * rotSpeed * deltaTime, 0);
 	
-	POINT mousePos = {};
+/*	POINT mousePos = {};
 	GetCursorPos(&mousePos);
 	ScreenToClient(windowHandle, &mousePos);
 	float x = (width / 2 - mousePos.x) * -0.001f;
 	float y = (height / 2 - mousePos.y) * -0.001f;
+*/
 
-
-	camera->transform.SetRotation(pEntity->object.pitch + 0.3f + y, pEntity->object.yaw + x, pEntity->object.roll);
+	camera->transform.SetRotation(pEntity->object.pitch + 0.3f, pEntity->object.yaw, pEntity->object.roll);
 	
 
 	camera->transform.SetPosition(pEntity->object.position.x, pEntity->object.position.y, pEntity->object.position.z);
