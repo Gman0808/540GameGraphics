@@ -415,7 +415,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	);
 	destructivePixelShader->SetData("screenSizeY",
 		&height,
-		sizeof(height)
+		sizeof(width)
 	);
 
 	destructivePixelShader->SetData("lData1",

@@ -21,8 +21,8 @@ cbuffer ExternalData : register(b0)
 	float3 playerPos;
 
 	float gameTime;
-	float screenSizeX;
-	float screenSizeY;
+	int screenSizeX;
+	int screenSizeY;
 
 	directionalLight lData1;
 	directionalLight lData2;
@@ -124,18 +124,18 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	
 	
 	//Manhattan distance from center
-	float x = abs(input.position.x - screenSizeX / 2) + abs(input.position.y - screenSizeY / 2);
+	float x = abs(input.position.x - (screenSizeX / 2)) + abs(input.position.y - (screenSizeY / 2));
 	
 	//Pasted with light modifications from https://thebookofshaders.com/13/
-	float amplitude = 1;
-	float frequency = 1;
+	float amplitude = 2;
+	float frequency = .5;
 	float y = sin(x * frequency);
-	float t = (gameTime * 2);
+	float t = (gameTime * -6);
 	//Some BS
-	y += sin(x * frequency * 2.1 + t) * 4.5;
-	y += sin(x * frequency * 1.72 + t * 1.121) * 4.0;
-	y += sin(x * frequency * 2.221 + t) * 5.0;
-	y += sin(x * frequency * 3.1122 + t * 4.269) * 2.5;
+	y += sin(x * frequency * 1.1 + t);
+	y += sin(x * frequency * 1.22 + t * 1.121);
+	y += sin(x * frequency * 1.221 + t);
+	y += sin(x * frequency * 1.1022 + t * .9269);
 	y *= amplitude * 0.06;
 	//end paste
 	
