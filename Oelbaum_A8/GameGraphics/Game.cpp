@@ -191,7 +191,7 @@ void Game::Init()
 	mat1 = Material(XMFLOAT4(0.5f, 0.5f, 1.0f, 1.0f), vertexShader, pixelShader, 1.5f, diffuseTexture2, normalMap2, surfInput2, samplerOptions2);
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 30.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
-	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(5.0f, 5.0f, 5.0f));
+	tObj2 = Transform(XMFLOAT3(0, 0, 70.0f), XMFLOAT3(60.0f, 0.0f, 0.0f), XMFLOAT3(4.0f, 4.0f, 4.0f));
 	
 	levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
 	

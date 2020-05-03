@@ -90,7 +90,7 @@ void Player::Update(float deltaTime, HWND windowHandle, float width, float heigh
 	//space - move forwards
 	//adsw - rotate
 
-	vFoward = simulateAcceleration(vFoward * deltaTime,0.05f, 0.05f, 0.05f, 10,  deltaTime, VK_SPACE);
+	vFoward = simulateAcceleration(vFoward,0.05f, 0.05f, .1f, .1f,  deltaTime, VK_SPACE);
 	vRotateX = simulateAcceleration(vRotateX, 0.3f, 1.0f, 1.0f, deltaTime, 'D', 'A');
 	vRotateY = simulateAcceleration(vRotateY, 0.3f, 1.0f, 1.0f, deltaTime, 'W', 'S');
 	pEntity->object.MoveRelative(0, 0, vFoward);

@@ -122,7 +122,6 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 
 	//Inside pattern
 	
-	
 	//Manhattan distance from center
 	float x = abs(input.position.x - (screenSizeX / 2)) + abs(input.position.y - (screenSizeY / 2));
 	
@@ -143,6 +142,7 @@ float4 main(VertexToPixelNormalMap input) : SV_TARGET
 	float preToggle = dot(V, N);
 	float toggle = ((preToggle / abs(preToggle)) + 1) / 2;
 	
+	//toggle front or back face
 	float4 finalColor = float4((light1 + light2 + light3 + finalPLColor) * input.color.xyz * surfaceColor, 1) * toggle + float4(y, 0, 0, 1.0f) * (1 - toggle);
 
 
