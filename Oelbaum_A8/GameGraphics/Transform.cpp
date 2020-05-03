@@ -31,7 +31,9 @@ using namespace std;
 
 	Transform::~Transform()
 	{
-
+		//delete posPoint;
+		//posPoint = nullptr;
+		//delete this;
 	}
 
 	

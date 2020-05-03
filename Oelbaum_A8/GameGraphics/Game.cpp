@@ -2,6 +2,9 @@
 #include "Vertex.h"
 #include "Mesh.h"
 #include <iostream>
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
 using namespace std;
 // Needed for a helper function to read compiled shader files from the hard drive
 #pragma comment(lib, "d3dcompiler.lib")
@@ -31,6 +34,9 @@ Game::Game(HINSTANCE hInstance)
 		720,			   // Height of the window's client area
 		true)			   // Show extra stats (fps) in title bar?
 {
+
+
+
 	cam = 0;
 	//	currentEntity = 0;
 		//prevTab = false;
@@ -55,13 +61,13 @@ Game::~Game()
 	// we don't need to explicitly clean up those DirectX objects
 	// - If we weren't using smart pointers, we'd need
 	//   to call Release() on each DirectX object
-	//cam->~Camera();
-//	cam = nullptr;
-//	delete []cam;
 
 
+	
 	delete cam;
 	cam = nullptr;
+	
+
 
 	delete destructiveVertexShader;
 	destructiveVertexShader = nullptr;
@@ -71,8 +77,25 @@ Game::~Game()
 	vertexShader = nullptr;
 	delete pixelShader;
 	pixelShader = nullptr;
+	delete skyMesh;
+	skyMesh = nullptr;
+	delete skyVS;
+	skyVS = nullptr;
+	delete skyPS;
+	skyPS = nullptr;
+	delete pEntity;
+	pEntity = nullptr;
+	delete levelEntity;
+	levelEntity = nullptr;
+	delete levelGeometry;
+    levelGeometry = nullptr;
+	delete playMesh;
+	playMesh = nullptr;
 
-
+	
+	
+	
+	
 }
 
 // --------------------------------------------------------
@@ -81,7 +104,7 @@ Game::~Game()
 // --------------------------------------------------------
 void Game::Init()
 {
-	currentTime = 0;
+	
 	lData.ambientColor = XMFLOAT3(0.5f, 0.1f, 0.6f);
 	lData.diffuseColor = XMFLOAT3(1.0f, 0.1f, 0.1f);
 	lData.direction = XMFLOAT3(1, 0.5f, 0);
@@ -169,12 +192,12 @@ void Game::Init()
 
 	tObj1 = Transform(XMFLOAT3(0, 0, 30.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(1.0f, 1.0f, 1.0f));
 	tObj2 = Transform(XMFLOAT3(0, 0, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(5.0f, 5.0f, 5.0f));
+	
+	levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
+	
+	 playMesh = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 
-	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/LevelGeo.obj").c_str(), device);
-	//	Mesh* levelGeometry = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
-	Mesh* playMesh = new Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
-
-
+	
 	pEntity = new Entity(playMesh, tObj1);
 	pEntity->GetTransform()->SetPosition(0, 0, 0.0f);
 	pEntity->mat = &mat1;
@@ -192,7 +215,7 @@ void Game::Init()
 	levelEntity->mat = &mat2;
 
 
-
+	
 	skyMesh = new  Mesh(GetFullPathTo("../../Assets/Models/cube.obj").c_str(), device);
 	// Load the sky box texture
 	CreateDDSTextureFromFile(
@@ -217,10 +240,12 @@ void Game::Init()
 
 	//Since everything is using backfaces, don't worry about resetting culling
 	context->RSSetState(skyRasterState.Get());
+	
 }
 
 void Game::RenderSky()
 {
+	
 	// Set up my render state
 	context->OMSetDepthStencilState(skyDepthState.Get(), 0);
 
@@ -240,6 +265,7 @@ void Game::RenderSky()
 
 	// Reset any states back to the default
 	context->OMSetDepthStencilState(0, 0);
+	
 }
 
 
@@ -257,7 +283,7 @@ void Game::RenderSky()
 // --------------------------------------------------------
 void Game::LoadShaders()
 {
-
+	
 	destructiveVertexShader = new SimpleVertexShader(
 		device.Get(),
 		context.Get(),
@@ -277,16 +303,17 @@ void Game::LoadShaders()
 		device.Get(),
 		context.Get(),
 		GetFullPathTo_Wide(L"NormalMapPS.cso").c_str());
-
+	
 	skyVS = new SimpleVertexShader(
 		device.Get(),
 		context.Get(),
 		GetFullPathTo_Wide(L"SkyVS.cso").c_str());
-
+	
 	skyPS = new SimplePixelShader(
 		device.Get(),
 		context.Get(),
 		GetFullPathTo_Wide(L"SkyPS.cso").c_str());
+		
 }
 
 
@@ -296,61 +323,7 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateBasicGeometry()
 {
-	// Create some temporary variables to represent colors
-	// - Not necessary, just makes things more readable
-	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-
-	// Set up the vertices of the triangle we would like to draw
-	// - We're going to copy this array, exactly as it exists in memory
-	//    over to a DirectX-controlled data structure (the vertex buffer)
-	// - Note: Since we don't have a camera or really any concept of
-	//    a "3d world" yet, we're simply describing positions within the
-	//    bounds of how the rasterizer sees our screen: [-1 to +1] on X and Y
-	// - This means (0,0) is at the very center of the screen.
-	// - These are known as "Normalized Device Coordinates" or "Homogeneous 
-	//    Screen Coords", which are ways to describe a position without
-	//    knowing the exact size (in pixels) of the image/window/etc.  
-	// - Long story short: Resizing the window also resizes the triangle,
-	//    since we're describing the triangle in terms of the window itself
-	Vertex vertices[] =
-	{
-		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-		{ XMFLOAT3(-0.4f, +0.4f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-		{ XMFLOAT3(-0.4f, -0.4f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
-	};
-
-	Vertex vertices2[] =
-	{
-		{ XMFLOAT3(+0.0f, +0.95f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
-		{ XMFLOAT3(+0.0f, +0.0f, +0.20f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
-		{ XMFLOAT3(-0.95f, +0.0f, +0.20f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-		{ XMFLOAT3(-0.95f, +0.95f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-
-	};
-
-	Vertex vertices3[] =
-	{
-		{ XMFLOAT3(+0.1f, +0.5f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
-		{ XMFLOAT3(+0.2f, +0.1f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-		{ XMFLOAT3(+0.2f, -0.1f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-		{ XMFLOAT3(+0.1f, -0.5f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f) },
-		{ XMFLOAT3(-0.2f, -0.1f, +0.0f), XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
-		{ XMFLOAT3(-0.2f, +0.1f, +0.0f),XMFLOAT2(0.0f,0.0f), XMFLOAT3(0.0f, 0.0f,-1.0f)},
-	};
-
-
-	// Set up the indices, which tell us which vertices to use and in which order
-	// - This is somewhat redundant for just 3 vertices (it's a simple example)
-	// - Indices are technically not required if the vertices are in the buffer 
-	//    in the correct order and each one will be used exactly once
-	// - But just to see how it's done...
-	unsigned int indices[] = { 0, 1, 2 };
-	unsigned int indices2[] = { 0, 1, 2, 0,2,3 };
-	unsigned int indices3[] = { 0,1,2,1,4,5,1,2,4,2,3,4 };
-
-
+	
 
 }
 
@@ -361,10 +334,12 @@ void Game::CreateBasicGeometry()
 // --------------------------------------------------------
 void Game::OnResize()
 {
+	
 	// Handle base-level DX resize stuff
 	DXCore::OnResize();
 	if (cam != NULL)
 		cam->UpdateProjectionMatrix((float)this->width / this->height);
+		
 }
 
 // --------------------------------------------------------
@@ -372,7 +347,7 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
-
+	
 	// Quit if the escape key is pressed
 	if (GetAsyncKeyState(VK_ESCAPE))
 		Quit();
@@ -380,6 +355,7 @@ void Game::Update(float deltaTime, float totalTime)
 
 	cam->Update(deltaTime, this->hWnd);
 	player.Update(deltaTime, this->hWnd, this->width, this->height);
+	
 }
 
 // --------------------------------------------------------
@@ -387,7 +363,7 @@ void Game::Update(float deltaTime, float totalTime)
 // --------------------------------------------------------
 void Game::Draw(float deltaTime, float totalTime)
 {
-
+	
 	// Background color (Cornflower Blue in this case) for clearing
 	const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
 
@@ -484,5 +460,5 @@ void Game::Draw(float deltaTime, float totalTime)
 
 
 
-
+	
 }

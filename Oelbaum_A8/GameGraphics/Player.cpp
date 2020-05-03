@@ -21,6 +21,10 @@ Player::Player(Entity* play, Camera* cam)
 
 Player::~Player()
 {
+	//delete pEntity;
+	//pEntity = nullptr;
+	//delete camera;
+	//camera = nullptr;
 }
 
 float Player::simulateAcceleration(float velocity, float acceleration, float decceleration , float vLimit, float deltaTime, int pos, int neg)

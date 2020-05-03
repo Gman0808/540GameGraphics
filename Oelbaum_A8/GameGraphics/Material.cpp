@@ -86,4 +86,6 @@ Material::Material(XMFLOAT4 t, SimpleVertexShader* v, SimplePixelShader* p, floa
 
 Material::~Material()
 {
+	//delete vertex;
+	//vertex = nullptr;
 }

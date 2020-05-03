@@ -31,8 +31,7 @@ public:
 	void OnResize();
 	void Update(float deltaTime, float totalTime);
 	void Draw(float deltaTime, float totalTime);
-	high_resolution_clock::time_point t2;
-	high_resolution_clock::time_point t1;
+
 private:
 
 	// Initialization helper methods - feel free to customize, combine, etc.
@@ -52,19 +51,19 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
 
 
-	bool check = false;
-	float t = 0;
-	float currentTime;
+	//bool check = false;
+	//float t = 0;
+//	float currentTime;
 
-	Mesh obj1;
-	Mesh obj2;
-	Mesh obj3;
+	///Mesh obj1;
+	//Mesh obj2;
+	//Mesh obj3;
 
 	Material mat1;
 	Material mat2;
 	Material mat3;
 
-	Mesh* gMesh1;
+	//Mesh* gMesh1;
 	Camera* cam;
 
 	DirectionalLight lData;
@@ -79,7 +78,7 @@ private:
 	SimpleVertexShader* vertexShader;
 
 
-	Mesh playMesh;
+	Mesh* playMesh;
 	Entity* pEntity;
 
 	Player player;
@@ -112,6 +111,9 @@ private:
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> skySRV;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> skyRasterState;
 	Microsoft::WRL::ComPtr<ID3D11DepthStencilState> skyDepthState;
+
+
+	Mesh* levelGeometry;
 
 	// Private render methods
 	void RenderSky();

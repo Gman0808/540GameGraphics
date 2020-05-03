@@ -20,7 +20,10 @@ Entity::Entity(Mesh* mPoint, Transform obj)
 
 Entity::~Entity()
 {
-//	DELETE mat;
+//	delete mesh;
+	//mesh = nullptr;
+	//delete mat;
+	//mat = nullptr;
 }
 
 Mesh* Entity::GetMesh()
