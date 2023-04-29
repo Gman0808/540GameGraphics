@@ -66,8 +66,8 @@ void Camera::UpdateViewMatrix()
 	up = XMVectorSet(0, 1, 0, 0);
 	// Define the "standard" forward vector w/o rotation (0,0,1)
 
-	
-	XMStoreFloat4x4(&viewMat, XMMatrixLookToLH(XMLoadFloat3(&transform.GetPosition()), dir, up));
+	XMFLOAT3 trans = transform.GetPosition();
+	XMStoreFloat4x4(&viewMat, XMMatrixLookToLH(XMLoadFloat3(&trans), dir, up));
 }
 
 void Camera::Update(float dt, HWND windowHandle)
